@@ -8,6 +8,7 @@ const { check } = require("express-validator");
 const router = Router();
 
 const { createUser, loginUser, renewToken } = require("../controllers/auth");
+const { validateField } = require("../middlewares/validate-field");
 
 router.post(
   "/new",
@@ -18,6 +19,7 @@ router.post(
     check("password", "The password must have at least 6 characters").isLength({
       min: 6,
     }),
+    validateField,
   ],
   createUser
 );
@@ -29,6 +31,7 @@ router.post(
     check("password", "The password must have at least 6 characters").isLength({
       min: 6,
     }),
+    validateField,
   ],
   loginUser
 );

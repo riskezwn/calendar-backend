@@ -1,9 +1,9 @@
 const { response } = require("express");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
-const { generateJWT } = require('../helpers/jwt')
+const { generateJWT } = require("../helpers/jwt");
 
-const createUser = async (req, res = response) => {
+const createUser = async(req, res = response) => {
   const { email, password } = req.body;
 
   try {
@@ -40,7 +40,7 @@ const createUser = async (req, res = response) => {
   }
 };
 
-const loginUser = async (req, res = response) => {
+const loginUser = async(req, res = response) => {
   const { email, password } = req.body;
 
   try {
@@ -59,7 +59,7 @@ const loginUser = async (req, res = response) => {
     if (!isValidPassword) {
       return res.status(400).json({
         ok: false,
-        msg: 'Contraseña incorrecta'
+        msg: "Contraseña incorrecta"
       });
     };
 

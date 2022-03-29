@@ -1,6 +1,7 @@
 const { response } = require("express");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
+const { generateJWT } = require('../helpers/jwt')
 
 const createUser = async (req, res = response) => {
   const { email, password } = req.body;
@@ -22,10 +23,14 @@ const createUser = async (req, res = response) => {
 
     await user.save();
 
+    // Generate JWT
+    const token = await generateJWT(user.id, user.name);
+
     res.status(201).json({
       ok: true,
       uid: user.id,
-      name: user.name
+      name: user.name,
+      token
     });
   } catch (error) {
     res.status(500).json({
@@ -35,15 +40,44 @@ const createUser = async (req, res = response) => {
   }
 };
 
-const loginUser = (req, res = response) => {
+const loginUser = async (req, res = response) => {
   const { email, password } = req.body;
 
-  res.json({
-    ok: true,
-    msg: "login",
-    email,
-    password,
-  });
+  try {
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      return res.status(400).json({
+        ok: false,
+        msg: "No hay ninguna cuenta con ese email"
+      });
+    };
+
+    // Confirm passwords
+    const isValidPassword = bcrypt.compareSync(password, user.password);
+
+    if (!isValidPassword) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'Contraseña incorrecta'
+      });
+    };
+
+    // Generate JWT
+    const token = await generateJWT(user.id, user.name);
+
+    res.json({
+      ok: true,
+      uid: user.id,
+      name: user.name,
+      token
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: "Porfavor hable con el administrador",
+    });
+  };
 };
 
 const renewToken = (req, res = response) => {

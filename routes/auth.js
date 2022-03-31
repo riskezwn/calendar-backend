@@ -1,5 +1,5 @@
 /*
-    Auth routes
+    auth routes
     host + /api/auth
 */
 

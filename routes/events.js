@@ -28,7 +28,15 @@ router.post(
   ],
   createEvent);
 // update event by id
-router.put("/:id", updateEvent);
+router.put(
+  "/:id",
+  [
+    check("title", "Title is required").notEmpty(),
+    check("start", "Start date is required").custom(isDate),
+    check("end", "End date is required").custom(isDate),
+    validateField
+  ],
+  updateEvent);
 // delete event
 router.delete("/:id", deleteEvent);
 
